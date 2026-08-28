@@ -1,5 +1,8 @@
-document.querySelectorAll(".menu img").forEach((img) => {
-    img.addEventListener("click", () => {
-        window.open(img.src, "_blank");
-    });
-});
+import { groupByCategory, getDisplayPrice } from './menu-utils.mjs';
+const cfg=window.CHANTEA_CONFIG; const db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseKey);
+const menu=document.querySelector('#menu'), status=document.querySelector('#status');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function imageUrl(path){return path?db.storage.from(cfg.imageBucket).getPublicUrl(path).data.publicUrl:''}
+function card(item){const p=getDisplayPrice(item); const prices=p.single?`<strong>${p.single}</strong>`:`<span>M <strong>${p.m||'—'}</strong></span><span>L <strong>${p.l||'—'}</strong></span>`; const img=imageUrl(item.image_path); return `<article class="menu-card ${item.available?'':'sold-out'}"><div class="food-image">${img?`<img src="${esc(img)}" alt="${esc(item.name)}" loading="lazy">`:'<div class="no-image">CHAN TEA</div>'}</div><div class="food-info"><h3>${esc(item.name)}</h3>${item.available?`<div class="prices">${prices}</div>`:'<span class="sold-badge">HẾT HÀNG</span>'}</div></article>`}
+async function load(){status.textContent='Đang tải menu...'; const {data,error}=await db.from('menu_items').select('*').order('sort_order').order('id'); if(error){status.textContent='Không tải được menu. Vui lòng thử lại.';return} if(!data.length){status.textContent='Menu đang được cập nhật.';return} status.classList.add('hidden'); menu.innerHTML=groupByCategory(data).map(g=>`<section class="category"><h2>${esc(g.category)}</h2><div class="category-items">${g.items.map(card).join('')}</div></section>`).join('')}
+load();
