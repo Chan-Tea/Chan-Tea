@@ -1,8 +1,53 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fffaf2"><title>Quản lý Menu - Chan Tea</title><link rel="stylesheet" href="style.css"></head>
-<body class="admin-page"><header class="admin-header"><div><strong>CHAN TEA</strong><span>Quản lý menu</span></div><button id="logoutBtn" class="secondary hidden">Đăng xuất</button></header><main class="admin-main">
-<section id="authCard" class="panel auth-card"><h2>Đăng nhập quản lý</h2><p>Dùng email đã được cấp quyền.</p><label>Email<input id="email" type="email" autocomplete="email"></label><label>Mật khẩu<input id="password" type="password" autocomplete="current-password"></label><button id="loginBtn">Đăng nhập</button><button id="signupBtn" class="secondary">Tạo tài khoản lần đầu</button><div id="authMsg" class="form-msg"></div></section>
-<section id="manager" class="hidden"><div class="admin-toolbar"><h2>Danh sách món</h2><button id="addBtn">+ Thêm món</button></div><div id="adminStatus" class="status"></div><div id="adminList" class="admin-list"></div></section>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#fffaf2">
+  <title>Quản lý Menu - Chan Tea</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+<header class="admin-header"><div><strong>CHAN TEA</strong><span>Quản lý menu</span></div><button id="logoutBtn" class="secondary hidden">Đăng xuất</button></header>
+<main class="admin-main">
+  <section id="authCard" class="panel auth-card">
+    <h2>Đăng nhập quản lý</h2><p>Dùng email đã được cấp quyền.</p>
+    <label>Email<input id="email" type="email" autocomplete="email"></label>
+    <label>Mật khẩu<input id="password" type="password" autocomplete="current-password"></label>
+    <button id="loginBtn">Đăng nhập</button><button id="signupBtn" class="secondary">Tạo tài khoản lần đầu</button>
+    <div id="authMsg" class="form-msg"></div>
+  </section>
+
+  <section id="manager" class="hidden">
+    <div class="admin-toolbar">
+      <div><h2>Quản lý món</h2><div id="adminStatus" class="muted"></div></div>
+      <div class="toolbar-actions"><button id="addCategoryBtn" class="secondary">+ Thêm mục</button><button id="addBtn">+ Thêm món</button></div>
+    </div>
+    <div id="adminCategoryTabs" class="admin-category-tabs"></div>
+    <div class="category-manage-row"><strong id="activeCategoryTitle"></strong><div><button id="renameCategoryBtn" class="secondary compact">Đổi tên mục</button><button id="deleteCategoryBtn" class="danger compact">Xóa mục</button></div></div>
+    <div id="adminList" class="admin-list"></div>
+  </section>
 </main>
-<div id="modal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2 id="formTitle">Thêm món</h2><button id="closeBtn" class="icon-btn">×</button></div><form id="itemForm"><input id="itemId" type="hidden"><input id="oldImagePath" type="hidden"><label>Danh mục<input id="category" required placeholder="Ví dụ: Trà sữa"></label><label>Tên món<input id="name" required placeholder="Tên món"></label><div class="price-grid"><label>Giá thường<input id="priceSingle" type="number" min="0" step="1000" placeholder="30000"></label><label>Giá M<input id="priceM" type="number" min="0" step="1000"></label><label>Giá L<input id="priceL" type="number" min="0" step="1000"></label></div><small>Nhập giá thường hoặc giá M/L.</small><label>Ảnh món<input id="image" type="file" accept="image/jpeg,image/png,image/webp"></label><img id="preview" class="preview hidden" alt="Xem trước"><div class="form-row"><label class="check"><input id="available" type="checkbox" checked> Còn hàng</label><label>Thứ tự<input id="sortOrder" type="number" value="0"></label></div><div id="formMsg" class="form-msg"></div><button id="saveBtn" type="submit">Lưu món</button></form></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script type="module" src="admin.js"></script></body></html>
+
+<div id="modal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h2 id="formTitle">Thêm món</h2><button id="closeBtn" class="icon-btn">×</button></div>
+  <form id="itemForm"><input id="itemId" type="hidden"><input id="oldImagePath" type="hidden">
+    <label>Danh mục<select id="category" required></select></label>
+    <label>Tên món<input id="name" required placeholder="Tên món"></label>
+    <div class="price-grid"><label>Giá thường<input id="priceSingle" type="number" min="0" step="1000" placeholder="30000"></label><label>Giá M<input id="priceM" type="number" min="0" step="1000"></label><label>Giá L<input id="priceL" type="number" min="0" step="1000"></label></div>
+    <small>Nhập giá thường hoặc giá M/L.</small>
+    <label>Ảnh món<input id="image" type="file" accept="image/jpeg,image/png,image/webp"></label><img id="preview" class="preview hidden" alt="Xem trước">
+    <label class="check"><input id="available" type="checkbox" checked> Còn hàng</label>
+    <div id="formMsg" class="form-msg"></div><button id="saveBtn" type="submit">Lưu món</button>
+  </form>
+</div></div>
+
+<div id="categoryModal" class="modal hidden"><div class="modal-card small-modal"><div class="modal-head"><h2 id="categoryFormTitle">Thêm mục</h2><button id="closeCategoryBtn" class="icon-btn">×</button></div>
+  <form id="categoryForm"><input id="oldCategoryName" type="hidden"><label>Tên mục<input id="categoryName" required placeholder="Ví dụ: Kem"></label><div id="categoryMsg" class="form-msg"></div><button id="saveCategoryBtn" type="submit">Lưu mục</button></form>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script type="module" src="admin.js"></script>
+</body>
+</html>
